@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import Spinner from '../spinner';
+import {Link} from "react-router-dom";
+
 
 import './itemList.css';
 
@@ -33,16 +35,18 @@ export default class ItemList extends Component {
     }
  
     renderItems(arr){
+        const {page} = this.props;
         return arr.map((item) => {
+            console.log('item', item)
             const {id} = item;
+
             const label = this.props.renderItem(item);
             return (
                 <li 
                     key={id} 
                     className="list-group-item"
-                    onClick={() => this.props.onSelectItem(item)}
                 >
-                    {label}
+                    <Link to={`/${page}/${id}`}> {label} </Link>
                 </li>
             )
         })

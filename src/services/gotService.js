@@ -11,25 +11,40 @@ export default class GotService {
 	};
 	getAllCharacters = async () => {
 		// console.log(this); обязательно!! в this будет GotService
-		return await this.getResource('/characters?page=5&pageSize=10')
+		let res = await this.getResource('/characters?page=5&pageSize=10')
+		return res.map(item => this._transform(item))
 	}
 	getCharacter = async (id) => {
-		return await this.getResource(`/characters/${id}`)
+		let res = await this.getResource(`/characters/${id}`)
+		return this._transform(res);
 	}
 
 	getAllBooks = async () => {
 		// console.log(this); обязательно!! в this будет GotService
-		return await this.getResource('/books?page=1&pageSize=10')
+		let res = await this.getResource('/books?page=1&pageSize=10')
+		return res.map(item => this._transform(item))
 	}
 	getBook = async (id) => {
-		return await this.getResource(`/books/${id}`)
+		let res = await this.getResource(`/books/${id}`)
+		return this._transform(res);
 	}
 
 	getAllHouses = async () => {
-		return await this.getResource('/houses?page=5&pageSize=10')
+		let res = await this.getResource('/houses?page=5&pageSize=10')
+		return res.map((item) => this._transform(item));
 	}
-	getHous = async (id) => {
-	 	return await this.getResource(`/houses/${id}`)
+	getHouse = async (id) => {
+	 	let res = await this.getResource(`/houses/${id}`)
+		return this._transform(res);
+	}
+
+	_extractId(item) {
+		const idRegExp = /\/([0-9]*)$/;
+		return item.url.match(idRegExp)[1]
+	}
+
+	_transform = (item) => {
+		return {...item, id: this._extractId(item)}
 	}
 
 

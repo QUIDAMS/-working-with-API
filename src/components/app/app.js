@@ -3,9 +3,16 @@ import {Col, Row, Container} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
-import CharDetails from '../charDetails';
+import ItemDetails from '../itemDetails';
 import GotService from '../../services/gotService.js';
-import CharterPage from '../charterPage';
+import {CharacterPage, HousesPage, BooksPage, BookItem, CharacterItem, HouseItem} from '../pages';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
 
 import './app.css';
 
@@ -17,7 +24,6 @@ export default class App extends Component {
         super();
         this.state = {
             view: true,
-            selectedMenu: 'characters',
         }
     }
     
@@ -25,76 +31,50 @@ export default class App extends Component {
         this.setState({view: !this.state.view})
     }
 
-    onSelectedMenu = (field) => {
-        this.setState({selectedMenu: field})
-    }
-
-    showCharterPage = () => {
-        const arrCharacters = ['gender', 'born', 'died', 'culture'];
-        const arrBooks = ['name', 'isbn', 'authors', 'numberOfPages', 'publisher', 'country', 'mediaType', 'released'];
-        const arrHouses = ['name', 'region', 'coatOfArms', 'words'];
-        const {selectedMenu} = this.state;
-        let arr = []
-        let getData;
-        switch(selectedMenu) {
-          case 'characters':
-            arr = arrCharacters
-            getData = this.someChar.getAllCharacters
-            break
-          case 'books':
-            arr = arrBooks
-            getData = this.someChar.getAllBooks
-            break
-          case 'houses':
-            arr = arrHouses
-            getData = this.someChar.getAllHouses
-            break
-        }
-        return <CharterPage arr={arr} getData={getData} />
-    }
 
     render(){
         const contentRandomChar = this.state.view ? <RandomChar/> : null;
+        
         return (
             <> 
-                <Container>
-                    <Header onSelectedMenu={this.onSelectedMenu}/>
-                </Container>
-                <Container>
-                    <Row>
-                        <Col lg={{size: 5, offset: 0}}>
-                            {contentRandomChar}
-                        </Col>
-                    </Row>
-                    <button className="blue" onClick={this.changeViewRandomChar}>Скрыть</button>
-                    {this.showCharterPage()}
-                   
-                </Container>
+                <Router>
+                        <div className='app'>
+                        <Container>
+                            <Header onSelectedMenu={this.onSelectedMenu}/>
+                        </Container>
+                        <Container>
+                            <Row>
+                                <Col lg={{size: 5, offset: 0}}>
+                                    {contentRandomChar}
+                                </Col>
+                            </Row>
+                            <button className="blue" onClick={this.changeViewRandomChar}>Скрыть</button>
+                                    <Route path='/' exact />
+                                    <Route path='/characters' exact component={CharacterPage}/>
+                                    <Route path='/books' exact component={BooksPage}/>
+                                    <Route path='/houses' exact component={HousesPage}/>
+                                    <Route path='/books/:id'  render={
+                                        ({match}) => {
+                                            const {id} = match.params;
+                                            return <BookItem currentItem={id}/>
+                                        }
+                                    }/>
+                                    <Route path='/characters/:id'  render={
+                                        ({match}) => {
+                                            const {id} = match.params;
+                                            return <CharacterItem currentItem={id}/>
+                                        }
+                                    }/>
+                                    <Route path='/houses/:id'  render={
+                                        ({match}) => {
+                                            const {id} = match.params;
+                                            return <HouseItem currentItem={id}/>
+                                        }
+                                    }/>
+                        </Container>
+                    </div>
+                </Router>
             </>
         );
     }
 };
-
- // <Row>
- //                        <Col md='6'>
- //                            <ItemList 
- //                                onSelectChar={this.onSelectChar}
- //                                getData={this.someChar.getAllBooks}
- //                            />
- //                        </Col>
- //                        <Col md='6'>
- //                            <CharDetails charDetails={this.state.currentChar}/>
- //                        </Col>
- //                    </Row>
- //                    <Row>
- //                        <Col md='6'>
- //                            <ItemList 
- //                                onSelectChar={this.onSelectChar}
- //                                getData={this.someChar.getAllHouses}
- //                            />
- //                        </Col>
- //                        <Col md='6'>
- //                            <CharDetails charDetails={this.state.currentChar}/>
- //                        </Col>
- //                    </Row>
-
